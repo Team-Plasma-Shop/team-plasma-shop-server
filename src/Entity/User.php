@@ -44,7 +44,7 @@ class User
      * @var Collection<int, Pokemon>
      */
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Pokemon::class, orphanRemoval: true)]
-    private Collection $pokemon;
+    private ?Collection $pokemon = null;
 
     public function __construct()
     {
@@ -143,7 +143,7 @@ class User
     /**
      * @return Collection<int, Pokemon>
      */
-    public function getPokemon(): Collection
+    public function getPokemon(): ?Collection
     {
         return $this->pokemon;
     }
