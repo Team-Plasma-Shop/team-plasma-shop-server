@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+use Symfony\Bridge\Doctrine\Types\UuidType;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -15,12 +17,10 @@ use Doctrine\ORM\Mapping as ORM;
 class User
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
-    #[ORM\Column(type: Types::GUID)]
-    private ?string $uuid = null;
+    #[ORM\GeneratedValue(strategy: "CUSTOM")]
+    #[ORM\Column(type: UuidType::NAME)]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    private ?string $id = null;
 
     #[ORM\Column(length: 255)]
     private ?string $username = null;
@@ -32,40 +32,28 @@ class User
     private ?string $password = null;
 
     #[ORM\Column]
-    private ?bool $is_verified = null;
+    private ?bool $isVerified = null;
 
     #[ORM\Column(type: Types::ARRAY)]
     private array $role = [];
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $created_at = null;
+    private ?\DateTimeImmutable $createdAt = null;
 
     /**
      * @var Collection<int, Pokemon>
      */
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Pokemon::class, orphanRemoval: true)]
-    private ?Collection $pokemon = null;
+    private Collection $pokemons;
 
     public function __construct()
     {
-        $this->pokemon = new ArrayCollection();
+        $this->pokemons = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
-    }
-
-    public function getUuid(): ?string
-    {
-        return $this->uuid;
-    }
-
-    public function setUuid(string $uuid): static
-    {
-        $this->uuid = $uuid;
-
-        return $this;
     }
 
     public function getUsername(): ?string
@@ -106,12 +94,12 @@ class User
 
     public function isVerified(): ?bool
     {
-        return $this->is_verified;
+        return $this->isVerified;
     }
 
-    public function setVerified(bool $is_verified): static
+    public function setVerified(bool $isVerified): static
     {
-        $this->is_verified = $is_verified;
+        $this->isVerified = $isVerified;
 
         return $this;
     }
@@ -130,12 +118,12 @@ class User
 
     public function getCreatedAt(): ?\DateTimeImmutable
     {
-        return $this->created_at;
+        return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $created_at): static
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
-        $this->created_at = $created_at;
+        $this->createdAt = $createdAt;
 
         return $this;
     }
@@ -143,15 +131,15 @@ class User
     /**
      * @return Collection<int, Pokemon>
      */
-    public function getPokemon(): ?Collection
+    public function getPokemons(): Collection
     {
-        return $this->pokemon;
+        return $this->pokemons;
     }
 
     public function addPokemon(Pokemon $pokemon): static
     {
-        if (!$this->pokemon->contains($pokemon)) {
-            $this->pokemon->add($pokemon);
+        if (!$this->pokemons->contains($pokemon)) {
+            $this->pokemons->add($pokemon);
             $pokemon->setOwner($this);
         }
 
@@ -160,7 +148,7 @@ class User
 
     public function removePokemon(Pokemon $pokemon): static
     {
-        if ($this->pokemon->removeElement($pokemon)) {
+        if ($this->pokemons->removeElement($pokemon)) {
             // set the owning side to null (unless already changed)
             if ($pokemon->getOwner() === $this) {
                 $pokemon->setOwner(null);

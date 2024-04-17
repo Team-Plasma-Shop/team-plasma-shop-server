@@ -15,7 +15,7 @@ class Pokemon
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "CUSTOM")]
-    #[ORM\Column(UuidType::NAME)]
+    #[ORM\Column(type: UuidType::NAME)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
 
@@ -23,26 +23,26 @@ class Pokemon
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $image_link = null;
+    private ?string $imageLink = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
-    private ?string $price = null;
+    #[ORM\Column]
+    private ?float $price = null;
 
     #[ORM\Column(length: 255)]
     private ?string $type = null;
 
-    #[ORM\ManyToOne(inversedBy: 'pokemon')]
+    #[ORM\ManyToOne(inversedBy: 'pokemons')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $owner = null;
 
     #[ORM\Column]
-    private ?bool $is_sold = null;
+    private ?bool $isSold = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $modifiedAt = null;
+    private ?\DateTimeInterface $updatedAt = null;
 
     public function getId(): ?string
     {
@@ -63,22 +63,22 @@ class Pokemon
 
     public function getImageLink(): ?string
     {
-        return $this->image_link;
+        return $this->imageLink;
     }
 
-    public function setImageLink(string $image_link): static
+    public function setImageLink(string $imageLink): static
     {
-        $this->image_link = $image_link;
+        $this->imageLink = $imageLink;
 
         return $this;
     }
 
-    public function getPrice(): ?string
+    public function getPrice(): ?float
     {
         return $this->price;
     }
 
-    public function setPrice(string $price): static
+    public function setPrice(float $price): static
     {
         $this->price = $price;
 
@@ -111,12 +111,12 @@ class Pokemon
 
     public function isSold(): ?bool
     {
-        return $this->is_sold;
+        return $this->isSold;
     }
 
-    public function setSold(bool $is_sold): static
+    public function setSold(bool $isSold): static
     {
-        $this->is_sold = $is_sold;
+        $this->isSold = $isSold;
 
         return $this;
     }
@@ -126,26 +126,22 @@ class Pokemon
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $created_at): static
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
-        $this->createdAt = $created_at;
+        $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getModifiedAt(): ?\DateTimeInterface
+    public function getUpdatedAt(): ?\DateTimeInterface
     {
-        return $this->modifiedAt;
+        return $this->updatedAt;
     }
 
-    public function setModifiedAt(\DateTimeInterface $modified_at): static
+    public function setUpdatedAt(\DateTimeInterface $updatedAt): static
     {
-        $this->modifiedAt = $modified_at;
+        $this->updatedAt = $updatedAt;
 
         return $this;
-    }
-    
-    public function getDateX(){
-        return "tyoto";
     }
 }
