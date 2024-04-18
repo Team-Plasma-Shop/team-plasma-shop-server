@@ -5,6 +5,5 @@ lexik_jwt_authentication:
     token_extractors:
         authorization_header:
             enabled: true
-            prefix: Bearer
             name: Authorization
     user_identity_field: id
