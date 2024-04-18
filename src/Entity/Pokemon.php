@@ -10,7 +10,9 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 
 #[ORM\Entity(repositoryClass: PokemonRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    paginationItemsPerPage: 10,
+)]
 class Pokemon
 {
     #[ORM\Id]
