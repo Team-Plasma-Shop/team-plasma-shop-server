@@ -12,34 +12,43 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ['groups' => ['read:user:collection']]
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {   
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "CUSTOM")]
     #[ORM\Column(type: UuidType::NAME)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    #[Groups(['read:user:collection'])]
     private ?string $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['read:user:collection'])]
     private ?string $username = null;
 
     #[ORM\Column(length: 255, unique: true)]
+    #[Groups(['read:user:collection'])]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
     private ?string $password = null;
 
     #[ORM\Column]
+    #[Groups(['read:user:collection'])]
     private ?bool $isVerified = null;
 
     #[ORM\Column(type: Types::ARRAY)]
+    #[Groups(['read:user:collection'])]
     private $roles = [];
 
     #[ORM\Column]
+    #[Groups(['read:user:collection'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     /**
