@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
 use App\Repository\PokemonRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -13,6 +15,17 @@ use Symfony\Bridge\Doctrine\Types\UuidType;
 #[ApiResource(
     paginationItemsPerPage: 10,
 )]
+#[ApiResource(
+    uriTemplate: '/users/{id}/pokemons',
+    uriVariables: [
+        'id' => new Link(
+            fromClass: User::class,
+            toProperty: 'owner',
+        )
+    ],
+    operations: [new GetCollection()]
+)]
+
 class Pokemon
 {
     #[ORM\Id]
