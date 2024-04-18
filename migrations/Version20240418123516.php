@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20240417151727 extends AbstractMigration
+final class Version20240418123516 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -25,9 +25,10 @@ final class Version20240417151727 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN pokemon.id IS \'(DC2Type:uuid)\'');
         $this->addSql('COMMENT ON COLUMN pokemon.owner_id IS \'(DC2Type:uuid)\'');
         $this->addSql('COMMENT ON COLUMN pokemon.created_at IS \'(DC2Type:datetime_immutable)\'');
-        $this->addSql('CREATE TABLE "user" (id UUID NOT NULL, username VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, is_verified BOOLEAN NOT NULL, role TEXT NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE "user" (id UUID NOT NULL, username VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, is_verified BOOLEAN NOT NULL, roles TEXT NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_8D93D649E7927C74 ON "user" (email)');
         $this->addSql('COMMENT ON COLUMN "user".id IS \'(DC2Type:uuid)\'');
-        $this->addSql('COMMENT ON COLUMN "user".role IS \'(DC2Type:array)\'');
+        $this->addSql('COMMENT ON COLUMN "user".roles IS \'(DC2Type:array)\'');
         $this->addSql('COMMENT ON COLUMN "user".created_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql('ALTER TABLE pokemon ADD CONSTRAINT FK_62DC90F37E3C61F9 FOREIGN KEY (owner_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
     }

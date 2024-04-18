@@ -3,6 +3,13 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Link;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -19,8 +26,22 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ApiResource(
     normalizationContext: ['groups' => ['read:user:collection']]
 )]
+#[GetCollection]
+#[Get]
+#[GetCollection(
+    uriTemplate: '/users/{id}/pokemons',
+    requirements: ['id' => '\d+'],
+    paginationEnabled: false,
+    output: Pokemon::class,
+    name: 'get_user_pokemons'
+)]
+#[Post]
+#[Patch]
+#[Put]
+#[Delete]
+
 class User implements UserInterface, PasswordAuthenticatedUserInterface
-{   
+{
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "CUSTOM")]
     #[ORM\Column(type: UuidType::NAME)]
@@ -55,7 +76,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var Collection<int, Pokemon>
      */
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Pokemon::class, orphanRemoval: true)]
-    private Collection $pokemons;
+    private ?Collection $pokemons;
 
     public function __construct()
     {
