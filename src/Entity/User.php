@@ -8,14 +8,16 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ApiResource]
-class User
-{
+class User implements UserInterface, PasswordAuthenticatedUserInterface
+{   
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "CUSTOM")]
     #[ORM\Column(type: UuidType::NAME)]
@@ -25,7 +27,7 @@ class User
     #[ORM\Column(length: 255)]
     private ?string $username = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
@@ -35,7 +37,7 @@ class User
     private ?bool $isVerified = null;
 
     #[ORM\Column(type: Types::ARRAY)]
-    private array $role = [];
+    private $roles = [];
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
@@ -92,6 +94,22 @@ class User
         return $this;
     }
 
+    public function getSalt(): ?string
+    {
+        return null;
+    }
+
+    public function eraseCredentials()
+    {
+
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    
+    }
+
     public function isVerified(): ?bool
     {
         return $this->isVerified;
@@ -104,14 +122,17 @@ class User
         return $this;
     }
 
-    public function getRole(): array
+    public function getRoles(): array
     {
-        return $this->role;
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+        return array_unique($roles);
     }
 
-    public function setRole(array $role): static
+    public function setRoles(array $roles): static
     {
-        $this->role = $role;
+        $this->roles = $roles;
 
         return $this;
     }
