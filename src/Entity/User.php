@@ -19,10 +19,13 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ['groups' => ['read:user:collection']]
+)]
 
 
 
@@ -32,25 +35,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\GeneratedValue(strategy: "CUSTOM")]
     #[ORM\Column(type: UuidType::NAME)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    #[Groups(['read:user:collection'])]
     private ?string $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['read:user:collection'])]
     private ?string $username = null;
 
     #[ORM\Column(length: 255, unique: true)]
+    #[Groups(['read:user:collection'])]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
     private ?string $password = null;
 
     #[ORM\Column]
-    private ?bool $isVerified = null;
+    #[Groups(['read:user:collection'])]
+    private ?bool $isVerified;
 
     #[ORM\Column(type: Types::ARRAY)]
+    #[Groups(['read:user:collection'])]
     private $roles = [];
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    #[Groups(['read:user:collection'])]
+    private ?\DateTimeImmutable $createdAt;
 
     /**
      * @var Collection<int, Pokemon>
@@ -60,7 +69,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
+        $this->isVerified = false;
         $this->pokemons = new ArrayCollection();
+        $this->createdAt = (new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')))->setTimezone(new \DateTimeZone('Europe/Paris'));
+
     }
 
     public function getId(): ?string
