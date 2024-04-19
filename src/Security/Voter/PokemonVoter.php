@@ -10,7 +10,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class PokemonVoter extends Voter
 {
     public const EDIT = 'POST_EDIT';
-    public const VIEW = 'POST_VIEW';
+    public const POKEMON_VIEW = 'POKEMON_VIEW';
 
     private Security $security;
 
@@ -23,7 +23,7 @@ class PokemonVoter extends Voter
     {
         // replace with your own logic
         // https://symfony.com/doc/current/security/voters.html
-        return in_array($attribute, [self::EDIT, self::VIEW])
+        return in_array($attribute, [self::EDIT, self::POKEMON_VIEW])
             && $subject instanceof \App\Entity\Pokemon;
     }
 
@@ -42,7 +42,7 @@ class PokemonVoter extends Voter
                 // return true or false
                 return true;
                 break;
-            case self::VIEW:
+            case self::POKEMON_VIEW:
                 // logic to determine if the user can VIEW
                 // return true or false
                 if($this->security->isGranted('ROLE_USER')) {return true;}

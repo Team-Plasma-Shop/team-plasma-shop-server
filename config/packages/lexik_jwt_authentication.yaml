@@ -7,4 +7,4 @@ lexik_jwt_authentication:
             enabled: true
             prefix: Bearer
             name: Authorization
-    user_id_claim: id
+    user_id_claim: email
