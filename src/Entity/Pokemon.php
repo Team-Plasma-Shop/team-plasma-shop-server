@@ -3,14 +3,31 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
 use App\Repository\PokemonRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 
 #[ORM\Entity(repositoryClass: PokemonRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    paginationItemsPerPage: 10,
+    security: "is_granted('ROLE_USER')",
+)]
+#[ApiResource(
+    uriTemplate: '/users/{id}/pokemons',
+    uriVariables: [
+        'id' => new Link(
+            fromClass: User::class,
+            toProperty: 'owner',
+        )
+    ],
+    operations: [new GetCollection()]
+)]
+
 class Pokemon
 {
     #[ORM\Id]
@@ -36,13 +53,20 @@ class Pokemon
     private ?User $owner = null;
 
     #[ORM\Column]
-    private ?bool $isSold = null;
+    private ?bool $isSold;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    private ?\DateTimeImmutable $createdAt;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $updatedAt = null;
+    private ?\DateTimeInterface $updatedAt;
+
+    public function __construct()
+    {
+        $this->isSold = false;
+        $this->createdAt = (new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')))->setTimezone(new \DateTimeZone('Europe/Paris'));
+        $this->updatedAt = (new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')))->setTimezone(new \DateTimeZone('Europe/Paris'));
+    }
 
     public function getId(): ?string
     {
@@ -53,6 +77,7 @@ class Pokemon
     {
         return $this->name;
     }
+
 
     public function setName(string $name): static
     {
