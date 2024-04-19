@@ -15,7 +15,7 @@ use Symfony\Bridge\Doctrine\Types\UuidType;
 #[ORM\Entity(repositoryClass: PokemonRepository::class)]
 #[ApiResource(
     paginationItemsPerPage: 10,
-    security: "is_granted('POST_VIEW', object)"
+    security: "is_granted('ROLE_USER')",
 )]
 #[ApiResource(
     uriTemplate: '/users/{id}/pokemons',
