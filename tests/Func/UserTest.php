@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class UserTest extends AbstractEndPoint
 {
-    private string $hardUserPayload = '{"username": "hard", "email": "hard@gmail.com", "password": "password"}';
+    private string $hardUserPayload = '{"username": "hardUsername", "email": "hard@gmail.com", "password": "password"}';
     private string $putUserPayload = '{"username": "putUser", "email": "put@gmail.com", "password": "password"}';
 
     protected function setUp(): void
