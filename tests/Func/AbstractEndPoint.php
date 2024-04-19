@@ -10,12 +10,19 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class AbstractEndPoint extends WebTestCase
 {
     private array $serverInformations = ['ACCEPT' => 'application/json', 'CONTENT_TYPE' => 'application/json'];
+    private $client;
+
+    protected function setUp(): void
+    {
+        $this->client = self::createClient();
+
+    }
+
     public function getResponseFromRequest(string $method, string $uri, string $payload = '') : Response
     {
-        $client = self::createClient();
 
-        $client->request(
-            Request::METHOD_GET,
+        $this->client->request(
+            $method,
             $uri . '.json',
             [],
             [],
@@ -23,7 +30,6 @@ abstract class AbstractEndPoint extends WebTestCase
             $payload
         );
 
-
-        return $client->getResponse();
+        return $this->client->getResponse();
     }
 }
